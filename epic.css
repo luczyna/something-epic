@@ -7,6 +7,24 @@ html, body {
 	padding: 0;
 }
 
+/* colors
+ * offblack		#575756
+ 				#8D8C8C
+ 				#B2B2B2
+ * blue			#009CB4
+				#33B0C3
+				#66C4D2
+ * red			#E30613
+				#E93842
+				#EE6A71
+ * green		#66C08C
+ 				#009640
+ 				#33AB66
+ * orange		#F18700
+ 				#F49F33
+ 				#F7B766
+ */
+
 .container {
 	margin: 0 auto;
 	max-width: 60em;
@@ -64,7 +82,7 @@ html, body {
 .home hr {
 	border: 0;
 	height: 2px;
-	background: tomato;
+	background: #009640;
 	margin: 1em auto;
 }
 .home p {
@@ -89,7 +107,7 @@ html, body {
 }
 .about-wrap p {}
 .about-wrap .about-closer {
-	background: red;
+	background: #E30613;
 	color: white;
 	padding: 1% 2%;
 	position: absolute;
@@ -117,7 +135,7 @@ html, body {
 	margin: 0 auto 2em;
 }
 .character.active-choice {
-	outline: 2px tomato solid;
+	outline: 2px #009640 solid;
 }
 .character:first-of-type {
 	margin-left: 20%;

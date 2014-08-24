@@ -19,6 +19,23 @@ var segame = {
 		point: [],
 		monster: [ [], [], [], [] ]
 	},
+	source: {
+		guy: [ 
+				[ [0, 0], [50, 0], [100, 0], [150, 0], [200, 0] ],
+				[ [0, 50], [50, 50], [100, 50], [150, 50], [200, 50] ], 
+				[ [0, 100], [50, 100], [100, 100], [150, 100], [200, 100] ], 
+				[ [0, 150], [50, 150], [100, 150], [150, 150], [200, 150] ],
+				[ [0, 200], [50, 200], [100, 200], [150, 200], [200, 200] ]
+			],
+		bomb: [ [0, 250], [50, 250], [100, 250] ],
+		point: [ [0, 300], [50, 300] ],
+		monster: [
+				[ [0, 350], [50, 350], [100, 350] ],
+				[ [0, 400], [50, 400], [100, 400] ],
+				[ [0, 450], [50, 450], [100, 450] ],
+				[ [0, 500], [50, 500], [100, 500] ]
+			]
+	},
 	fifth: 0,
 	moving: false,
 	playing: false
@@ -33,6 +50,16 @@ var sescreens = {
 
 //initialize the game
 function init() {
+	//can we play this?
+	var canvas = document.getElementById('can');
+	if (!canvas.getContext) {
+		//we can't play this, this browser does not support canvas
+		var unfortunate = document.createElement('p');
+		unfortunate.classList.add('misfortune');
+		unfortunate.textContent = 'Oops, it looks like the browser you\'re using is outdated or simply not equipped to play this wonderful game. Please switch to a modern browser to experience something truly epic.';
+		segames.home.insertBefore(unfortunate, segames.home.children[1]);
+		return;
+	}
 	//check for local storage stuff
 	var col = gls('color');
 	if (typeof col !== 'undefined') {
@@ -92,7 +119,7 @@ function getReadyToPlay() {
 
 }
 function goPlayGame() {
-	console.log(this);
+	// console.log(this);
 	if (this !== window && this.classList.contains('inactive')) {
 		return;
 	}
@@ -124,5 +151,20 @@ function goPlayGame() {
 }
 
 function prepareCanvas() {
-	console.log('good luck, asshole')
+	console.log('good luck, asshole');
+
+	var context = document.getElementById('can').getContext('2d');
+	var img = new Image();
+	img.onload = function() {
+		// context.drawImage(img, sx, sy, sw, sh, cx, cy, cw, ch);
+
+		//draw bomb
+		context.drawImage(img, segame.source.bomb[0][0], segame.source.bomb[0][1], 50, 50, 0, 0, segame.fifth, segame.fifth);
+
+		//draw first guy
+		context.drawImage(img, segame.source.guy[0][0][0], segame.source.guy[0][0][1], 50, 50, segame.fifth * 2, segame.fifth * 3, segame.fifth, segame.fifth);		
+		
+	}
+	img.src = 'images/se_spritesheet.svg'
+
 }
