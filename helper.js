@@ -245,6 +245,9 @@ function imageMapSizes() {
 
 
 
+
+
+
 //move our characters
 function moveGuys() {
 	segame.moving = true;
@@ -325,7 +328,7 @@ function checkForPointCollision() {
 	for (var i = 0; i < segame.points.length; i++) {
 		var p = segame.points[i];
 		if (a[0] === p[0] && a[1] === p[1] || b[0] === p[0] && b[1] === p[1]) {
-			console.log(p);
+			// console.log(p);
 			//remove this point later
 			cleanup.push(i);
 
@@ -353,7 +356,7 @@ function checkForPointCollision() {
 	if (cleanup.length) {
 		for (var j = cleanup.length; j > 0; j--) {
 			//this point is done with
-			console.log('cleanup item: ' + cleanup[j - 1]);
+			// console.log('cleanup item: ' + cleanup[j - 1]);
 			segame.points.splice(cleanup[j - 1], 1);
 		}
 	}
@@ -367,6 +370,8 @@ function checkForPointCollision() {
 //spawn stuff
 function spawning() {
 	spawnPoints();
+	bombCountdown();
+	spawnBombs();
 }
 function spawnPoints() {
 	//there will always be at most 5 points on screen
@@ -407,27 +412,124 @@ function spawnPoints() {
 		// console.log('you shouldn\'t be adding points');
 	}
 }
-function cleanupPoints() {
-	//desparation move
-	//IAM Dangerous
-	var elem = segame.canvas.getElementsByClassName('point');
-	for (var i = 0; i < elem.length; i++) {
-		
-		var thisid = elem[i].id;
-		var check = thisid.replace('point-', '');
-		var present = false;
-		for (var j = 0; j < segame.points.length; i++) {
-			if (segame.points[j][3] === Number(check)) {
-				present = true;
-			}
-		}
+function spawnBombs() {
+	//there should be at most 6 bombs on screen
+	if (segame.bombs.length >= 6) {
+		// console.log('too many bombs');
+		return;
+	}
 
-		//was it there?
-		if (!present) {
-			//it wasn't there, we don't want it in the DOM
-			segame.canvas.removeChild(elem[i]);
+	//will we spawn a bomb this turn?
+	var maybe = Math.random();
+	if (maybe >= 0.6) {
+		// console.log('the odds were never in the bomb favorian');
+		//60% chance to spawn bomb
+		return;
+	}
+
+
+	var bomb = [];
+	var b = document.createElement('div');
+	b.classList.add('bomb');
+	b.id = 'bomb-' + segame.count.bombs;
+	b.style.height = segame.fifth + 'px';
+	b.style.backgroundSize = segame.fifth * 5 + 'px auto';
+
+	//where does it go?
+	bomb[0] = outofFive();
+	bomb[1] = outofFive();
+
+	//is there a bomb there already?
+	//it'll cancel this whole spawn
+	if (checkBombPlacement(bomb[0], bomb[1])) {
+		//it shared a square with another bomb, no go!
+		// console.log('there was already a bomb there');
+		return;
+	}
+	
+	console.log('now we spawn a bomb!')	
+	b.style.left = segame.coordinates[bomb[0]][bomb[1]][0] + 'px';
+	b.style.top = segame.coordinates[bomb[0]][bomb[1]][1] + 'px';
+	b.style.backgroundPosition = -(segame.images.bomb[0][0]) + 'px ' + -(segame.images.bomb[0][1]) + 'px';
+
+	//set it's timer
+	bomb[2] = 3;
+	//tell us what image it's at
+	bomb[3] = 0;
+
+	//make it official
+	segame.bombs.push(bomb);
+	segame.canvas.appendChild(b)
+	segame.count.bombs++;
+
+}
+//check for bombs
+function checkBombPlacement(bx, by) {
+	for (var i = 0; i < segame.bombs.length; i++) {
+		//check this bomb
+		var cb = segame.bombs[i];
+		if (cb[0] === bx && cb[1] === by) {
+			// console.log('found a bomb there');
+			return false;
 		}
 	}
+}
+//every second turns down a bomb
+function bombCountdown() {
+	if (!segame.bombs.length) {
+		return;
+	}
+
+	var explode = [];
+	for (var i = 0; i < segame.bombs.length; i++) {
+		var check = segame.bombs[i];
+		check[2]--;
+
+		if (check[2] <= 0) {
+			//it's exploding!
+			explode.push(i);
+		}
+	}
+
+	// console.log(explode);
+	if (explode.length) {
+		console.log(explode);
+		//check if you were on the bomb
+		//where are we?
+		var a = [segame.player.me[0], segame.player.me[1]],
+			b = [segame.player.it[0], segame.player.it[1]];
+
+		for (var j = explode.length - 1; j >= 0; j--) {
+			var cb = segame.bombs[explode[j]];
+			if ( (a[0] === cb[0] && a[1] === cb[1]) || (b[0] === cb[0] && b[1] === cb[1]) ) {
+				//girl, you as'ploded
+				console.log('it\'s game over!');
+				window.clearInterval(checking);
+				window.clearInterval(spawning);
+				window.removeEventListener('keyup', keyup. false);
+				window.removeEventListener('keydown', keydown, false);
+			}
+
+			//let's remove the bomb from the DOM
+			var id = 'bomb-' + cb[3];
+			var child = document.getElementById(id);
+			if (child) {
+				child.style.backgroundPosition = -(segame.images.bomb[2][0]) + 'px ' + -(segame.images.bomb[2][1]) + 'px';
+				window.setTimeout(function() {
+						segame.canvas.removeChild(child);
+					//now let's remove it from the bomb list
+					segame.bombs.splice(j, 1);
+
+				}, 300);
+			}
+		}
+	}
+}
+//animate the bomb
+function bombFlashing() {
+	// for () {
+
+	// }
 }
 
 
@@ -444,23 +546,3 @@ function outofFive() {
 	var num = Math.floor(Math.random() * 4);
 	return num;
 }
-
-
-
-// sers: {
-// 		guy: [ 
-// 				[ [0, 0], [50, 0], [100, 0], [150, 0], [200, 0] ],
-// 				[ [0, 50], [50, 50], [100, 50], [150, 50], [200, 50] ], 
-// 				[ [0, 100], [50, 100], [100, 100], [150, 100], [200, 100] ], 
-// 				[ [0, 150], [50, 150], [100, 150], [150, 150], [200, 150] ],
-// 				[ [0, 200], [50, 200], [100, 200], [150, 200], [200, 200] ]
-// 			],
-// 		bomb: [ [0, 250], [50, 250], [100, 250] ],
-// 		point: [ [0, 300], [50, 300] ],
-// 		monster: [
-// 				[ [0, 350], [50, 350], [100, 350] ],
-// 				[ [0, 400], [50, 400], [100, 400] ],
-// 				[ [0, 450], [50, 450], [100, 450] ],
-// 				[ [0, 500], [50, 500], [100, 500] ]
-// 			]
-// 	},

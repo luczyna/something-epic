@@ -132,7 +132,7 @@ function goPlayGame() {
 	}, 300);
 }
 
-var checking, spawning;
+var checking, spawning, flashing;
 
 function prepareCanvas() {
 	console.log('good luck, asshole');
@@ -143,10 +143,11 @@ function prepareCanvas() {
 	moveGuys();
 
 	segame.playing = true;
-	window.addEventListener("keydown", keydown, false);
-	window.addEventListener("keyup", keyup, false);
+	window.addEventListener('keydown', keydown, false);
+	window.addEventListener('keyup', keyup, false);
 
 	checking = window.setInterval(checkALot, 50);
 	spawning = window.setInterval(spawning, 1000);
+	flashing = window.setInterval(bombFlashing, 200);
 
 }
