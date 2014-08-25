@@ -27,7 +27,7 @@ html, body {
 
 .container {
 	margin: 0 auto;
-	max-width: 60em;
+	max-width: 40em;
 }
 .container .click:before {
 	content: '> ';
@@ -159,13 +159,38 @@ html, body {
 	width: 80%;
 	margin: 0 auto 1em;
 }
-.game canvas {
+.game .canvas {
 	border-top: 1px white solid;
 	border-bottom: 1px white solid;
 	margin: 0 auto 1em;
+	/*display: block;*/
+	position: relative;
 }
+.game .player {
 
-
+}
+.game #me {
+	z-index: 980;
+}
+.game #it {
+	z-index: 970;
+}
+.game .player,
+.game .monster,
+.game .bomb,
+.game .point {
+	position: absolute;
+	background-repeat: no-repeat;
+	top: 0;
+	left: 0;
+	-o-transition: top 0.1s ease-out, left 0.1s ease-out;
+	-ms-transition: top 0.1s ease-out, left 0.1s ease-out;
+	-moz-transition: top 0.1s ease-out, left 0.1s ease-out;
+	-webkit-transition: top 0.1s ease-out, left 0.1s ease-out;
+	transition: top 0.1s ease-out, left 0.1s ease-out;
+	background: url('images/se_spritesheet.svg');	
+	width: 20%;
+}
 
 
 

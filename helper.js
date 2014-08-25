@@ -170,7 +170,7 @@ function sizeThings() {
 	var windowheight = window.innerHeight;
 
 	//prepare our canvas element, too
-	var can = sescreens.game.getElementsByTagName('canvas')[0]
+	var can = document.getElementById('can')
 	var fifth;
 	if (conwidth < windowheight) {
 		// container.style.height = window.innerHeight + 'px';
@@ -229,4 +229,238 @@ function imageMapSizes() {
 		}
 	}
 	// console.log(segame.images);
+
+	//let's just set up the two players
+	segame.me.style.backgroundSize = sqr*5 + 'px auto';
+	segame.it.style.backgroundSize = sqr*5 + 'px auto';
+
+	//what color am I?
+	var c = segame.color;
+	//what row is that color?
+	var imap = segame.images.guy[c];
+	segame.me.style.backgroundPosition = -(imap[0][0]) + 'px ' + -(imap[0][1]) + 'px';
+	segame.it.style.backgroundPosition = -(segame.images.guy[4][0][0]) + 'px ' + -(segame.images.guy[4][0][1]) + 'px';
+
 }
+
+
+
+//move our characters
+function moveGuys() {
+	segame.moving = true;
+	//where to put me?
+	var mex = segame.player.me[0];
+	var mey = segame.player.me[1];
+
+	segame.me.style.top = segame.coordinates[mex][mey][1] + 'px';
+	segame.me.style.left = segame.coordinates[mex][mey][0] + 'px';
+
+	//where to put it?
+	var itx = segame.player.it[0];
+	var ity = segame.player.it[1];
+
+	segame.it.style.top = segame.coordinates[itx][ity][1] + 'px';
+	segame.it.style.left = segame.coordinates[itx][ity][0] + 'px';
+	segame.me.addEventListener('transitionend', endMove, false);
+}
+function endMove() {
+	segame.moving = false;
+	segame.me.removeEventListener('transitionend', endMove, false);
+
+	//did we collect a thing?
+	checkForPointCollision();
+	// cleanupPoints();
+
+}
+function keydown(e) {
+	segame.kd[e.keyCode] = true;
+}
+function keyup(e) {
+	delete segame.kd[e.keyCode];
+}
+function makeMove() {
+}
+function checkALot() {
+	if (38 in segame.kd) { // Player holding up
+		// console.log(' pressing up ')
+		//can we move up?
+		if (segame.player.me[1] > 0 && !segame.moving) {
+			segame.player.me[1]--;
+			segame.player.it[1]++;
+			moveGuys();
+		}
+	}
+	if (40 in segame.kd) { // Player holding down
+		// console.log(' pressing down ')
+		if (segame.player.me[1] < 4 && !segame.moving) {
+			segame.player.me[1]++;
+			segame.player.it[1]--;
+			moveGuys();
+		}
+	}
+	if (37 in segame.kd) { // Player holding left
+		// console.log(' pressing left ')
+		if (segame.player.me[0] > 0 && !segame.moving) {
+			segame.player.me[0]--;
+			segame.player.it[0]++;
+			moveGuys();
+		}
+	}
+	if (39 in segame.kd) { // Player holding right
+		// console.log(' pressing right ')
+		if (segame.player.me[0] < 4 && !segame.moving) {
+			segame.player.me[0]++;
+			segame.player.it[0]--;
+			moveGuys();
+		}
+	}
+}
+function checkForPointCollision() {
+	//where are we?
+	var a = [segame.player.me[0], segame.player.me[1]],
+		b = [segame.player.it[0], segame.player.it[1]];
+
+	var cleanup = [];
+
+	for (var i = 0; i < segame.points.length; i++) {
+		var p = segame.points[i];
+		if (a[0] === p[0] && a[1] === p[1] || b[0] === p[0] && b[1] === p[1]) {
+			console.log(p);
+			//remove this point later
+			cleanup.push(i);
+
+			// console.log('we collect a point');
+			//they intersect!
+			//add points to points
+			segame.score += p[2]
+			var s = document.getElementById('score');
+			s.textContent = segame.score;
+
+			//remove this point from the dom
+			var id = 'point-' + p[3];
+			var child = document.getElementById(id);
+			// console.log(id);
+			// console.log(child);
+			if (child) {
+				segame.canvas.removeChild(child);
+			}
+
+		}
+	}
+
+	//now clean up after ourselves
+	// console.log('cleanup amount: ' + cleanup.length);
+	if (cleanup.length) {
+		for (var j = cleanup.length; j > 0; j--) {
+			//this point is done with
+			console.log('cleanup item: ' + cleanup[j - 1]);
+			segame.points.splice(cleanup[j - 1], 1);
+		}
+	}
+
+
+}
+
+
+
+
+//spawn stuff
+function spawning() {
+	spawnPoints();
+}
+function spawnPoints() {
+	//there will always be at most 5 points on screen
+	if (segame.points.length < 5) {
+		segame.count.points++;
+
+		//we need to spawn a new one!
+		var point = [];
+		var p = document.createElement('div');
+		p.classList.add('point');
+		p.id = 'point-' + segame.count.points;
+		p.style.height = segame.fifth + 'px';
+		p.style.backgroundSize = segame.fifth * 5 + 'px auto';
+
+		//where should we put it?
+		point[0] = outofFive();
+		point[1] = outofFive();
+		p.style.top = segame.coordinates[point[0]][point[1]][1]+ 'px';
+		p.style.left = segame.coordinates[point[0]][point[1]][0]+ 'px';
+
+		//how many points will it be?
+		var chance = Math.random();
+		if (chance <= 0.95) {
+			//regular point
+			point[2] = 10;
+			p.style.backgroundPosition = -(segame.images.point[0][0]) + 'px ' + -(segame.images.point[0][1]) + 'px';
+		} else {
+			//super mega point
+			point[2] = 100;
+			p.style.backgroundPosition = -(segame.images.point[1][0]) + 'px ' + -(segame.images.point[1][1]) + 'px';
+		}
+		point[3] = (segame.count.points);
+
+		segame.points.push(point);
+		segame.canvas.appendChild(p);
+		// console.log(segame.points.length);
+	} else {
+		// console.log('you shouldn\'t be adding points');
+	}
+}
+function cleanupPoints() {
+	//desparation move
+	//IAM Dangerous
+	var elem = segame.canvas.getElementsByClassName('point');
+	for (var i = 0; i < elem.length; i++) {
+		
+		var thisid = elem[i].id;
+		var check = thisid.replace('point-', '');
+		var present = false;
+		for (var j = 0; j < segame.points.length; i++) {
+			if (segame.points[j][3] === Number(check)) {
+				present = true;
+			}
+		}
+
+		//was it there?
+		if (!present) {
+			//it wasn't there, we don't want it in the DOM
+			segame.canvas.removeChild(elem[i]);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+//random generation
+function outofFive() {
+	var num = Math.floor(Math.random() * 4);
+	return num;
+}
+
+
+
+// sers: {
+// 		guy: [ 
+// 				[ [0, 0], [50, 0], [100, 0], [150, 0], [200, 0] ],
+// 				[ [0, 50], [50, 50], [100, 50], [150, 50], [200, 50] ], 
+// 				[ [0, 100], [50, 100], [100, 100], [150, 100], [200, 100] ], 
+// 				[ [0, 150], [50, 150], [100, 150], [150, 150], [200, 150] ],
+// 				[ [0, 200], [50, 200], [100, 200], [150, 200], [200, 200] ]
+// 			],
+// 		bomb: [ [0, 250], [50, 250], [100, 250] ],
+// 		point: [ [0, 300], [50, 300] ],
+// 		monster: [
+// 				[ [0, 350], [50, 350], [100, 350] ],
+// 				[ [0, 400], [50, 400], [100, 400] ],
+// 				[ [0, 450], [50, 450], [100, 450] ],
+// 				[ [0, 500], [50, 500], [100, 500] ]
+// 			]
+// 	},
