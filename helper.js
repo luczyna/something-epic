@@ -234,12 +234,7 @@ function imageMapSizes() {
 	segame.me.style.backgroundSize = sqr*5 + 'px auto';
 	segame.it.style.backgroundSize = sqr*5 + 'px auto';
 
-	//what color am I?
-	var c = segame.color;
-	//what row is that color?
-	var imap = segame.images.guy[c];
-	segame.me.style.backgroundPosition = -(imap[0][0]) + 'px ' + -(imap[0][1]) + 'px';
-	segame.it.style.backgroundPosition = -(segame.images.guy[4][0][0]) + 'px ' + -(segame.images.guy[4][0][1]) + 'px';
+	
 
 }
 
@@ -595,9 +590,55 @@ function backToHome() {
 
 
 
+//touch inputs
+function touchstart(evt) {
+	if (segame.playing) {
+		evt.preventDefault();
+		//log where we touched
+		segame.touch[0] = evt.touches[0].clientX;
+		segame.touch[1] = evt.touches[0].clientY;
+	}
+}
+function touchEnd(evt) {
+	if (segame.playing) {
+		evt.preventDefault();
+		//log where we let go
+		segame.touch[2] = evt.changedTouches[0].screenX;
+		segame.touch[3] = evt.changedTouches[0].screenY;
 
-
-
+		if (!segame.moving) {
+			if ((segame.touch[3] > segame.touch[1]) && (segame.touch[3] - segame.touch[1] > 100)) {
+		 		//swipe down
+				if (segame.player.me[1] < 4 && !segame.moving) {
+					segame.player.me[1]++;
+					segame.player.it[1]--;
+					moveGuys();
+				}
+			} else if ((segame.touch[3] < segame.touch[1]) && (segame.touch[1] - segame.touch[3] > 100)) {
+				//swipe up
+				if (segame.player.me[1] > 0 && !segame.moving) {
+					segame.player.me[1]--;
+					segame.player.it[1]++;
+					moveGuys();
+				}
+			} else if ((segame.touch[2] < segame.touch[0]) && (segame.touch[0] - segame.touch[2] > 100)) {
+				// swipe left
+				if (segame.player.me[0] > 0 && !segame.moving) {
+					segame.player.me[0]--;
+					segame.player.it[0]++;
+					moveGuys();
+				}
+			} else if ((segame.touch[2] > segame.touch[0]) && (segame.touch[2] - segame.touch[0] > 100)) {
+				//swipe right
+				if (segame.player.me[0] < 4 && !segame.moving) {
+					segame.player.me[0]++;
+					segame.player.it[0]--;
+					moveGuys();
+				}
+			}
+		}
+	}
+}
 
 
 

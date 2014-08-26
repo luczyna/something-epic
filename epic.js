@@ -31,7 +31,8 @@ var segame = {
 	me: document.getElementById('me'),
 	it: document.getElementById('it'),
 	canvas: document.getElementById('can'),
-	kd: []
+	kd: [],
+	touch: []
 }
 var sescreens = {
 	home: document.getElementById('homescreen'),
@@ -122,6 +123,13 @@ function goPlayGame() {
 		from = sescreens.home;
 	}
 
+	//what color am I?
+	var c = segame.color;
+	//what row is that color?
+	var imap = segame.images.guy[c];
+	segame.me.style.backgroundPosition = -(imap[0][0]) + 'px ' + -(imap[0][1]) + 'px';
+	segame.it.style.backgroundPosition = -(segame.images.guy[4][0][0]) + 'px ' + -(segame.images.guy[4][0][1]) + 'px';
+
 
 	//go to the game screen
 	//show us the screen
@@ -152,6 +160,8 @@ function prepareCanvas() {
 	segame.playing = true;
 	window.addEventListener('keydown', keydown, false);
 	window.addEventListener('keyup', keyup, false);
+	segame.canvas.addEventListener('touchstart', touchstart, false);
+	segame.canvas.addEventListener('touchend', touchEnd, false);
 
 	checking = window.setInterval(checkALot, 50);
 	spawning = window.setInterval(spawnThings, 1000);
