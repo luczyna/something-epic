@@ -5,6 +5,7 @@ var segame = {
 	color: null,
 	round: 0,
 	score: 0,
+	hiscore: 0,
 	player: {
 		me: [2, 2, 1],
 		it: [2, 2, 1]
@@ -49,11 +50,12 @@ function init() {
 	}
 
 	var scr = gls('score');
-	if (typeof src !== 'undefined') {
-		console.log('poop');
+	if (typeof scr !== 'undefined') {
+		// console.log('poop');
 		var elem = document.createElement('p');
-		elem.textContent = 'max-score: ' + gls('score');
+		elem.textContent = 'max-score: ' + scr;
 		sescreens.home.insertBefore(elem, sescreens.home.children[3]);
+		segame.hiscore = Number(scr);
 	}
 
 	//fill the coordinate variables
@@ -80,13 +82,16 @@ init();
 function getReadyToPlay() {
 	//reset all our info
 	segame.round = 0;
+	document.getElementById('score').textContent = 0;
 	segame.score = 0;
 	segame.player.me = [2, 2, 1];
 	segame.player.it = [2, 2, 1];
 	segame.monsters.length = 0;
 	segame.bombs.length = 0;
 	segame.points.length = 0;
-	segame.playing = true;
+	segame.count.points = 0;
+	segame.count.bombs = 0;
+	// segame.playing = true;
 
 	//is there a color?
 	if (segame.color === null) {
@@ -132,13 +137,15 @@ function goPlayGame() {
 	}, 300);
 }
 
-var checking, spawning, flashing;
+var checking, spawning, talking;
 
 function prepareCanvas() {
 	console.log('good luck, asshole');
 
-	segame.me.style.height = segame.me.offsetWidth + 'px';
-	segame.it.style.height = segame.it.offsetWidth + 'px';
+	if (segame.me.style.height === '') {
+		segame.me.style.height = segame.me.offsetWidth + 'px';
+		segame.it.style.height = segame.it.offsetWidth + 'px';
+	}
 
 	moveGuys();
 
@@ -147,7 +154,35 @@ function prepareCanvas() {
 	window.addEventListener('keyup', keyup, false);
 
 	checking = window.setInterval(checkALot, 50);
-	spawning = window.setInterval(spawning, 1000);
-	flashing = window.setInterval(bombFlashing, 200);
+	spawning = window.setInterval(spawnThings, 1000);
+	talking = window.setInterval(changeMessage, 3000);
 
+}
+function gameOver() {
+	//oh noes
+
+	//flash the screen to signify death
+	segame.canvas.style.backgroundColor = 'white';
+	window.setTimeout( function() {
+		segame.canvas.style.backgroundColor = 'transparent';
+		
+		window.setTimeout( function() {
+			//let's tell them they died
+			var m = document.createElement('h1');
+			m.classList.add('endmessage');
+			var r = Math.floor(Math.random() * endMess.length);
+			segame.canvas.appendChild(m);
+			m.textContent = 'GAME OVER - ' + endMess[r];
+			console.log(m);
+			window.setTimeout(function() {
+				m.style.opacity = 1;
+				m.style.top = '15%'
+				m.addEventListener('click', backToHome, false);
+			})	
+		}, 500);
+	}, 300);
+
+
+	//let them go back
+	// backToHome();
 }

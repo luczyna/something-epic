@@ -74,7 +74,7 @@ function showColorOptions(jumpinggun) {
 	//and needs to choose a color
 
 	var button = document.getElementById('change-character');
-	console.log(jumpinggun);
+	// console.log(jumpinggun);
 	if (jumpinggun.fromElement !== null) {
 		button.textContent = 'play!';
 		button.addEventListener('click', goPlayGame, false);
@@ -128,8 +128,8 @@ function sizeCharacters() {
 	}
 }
 function goHomefromColor() {
-	console.log(this);
-	console.log('make color decisions, win money');
+	// console.log(this);
+	// console.log('make color decisions, win money');
 	if (this.classList.contains('inactive')) {
 		return;
 	}
@@ -281,7 +281,10 @@ function keydown(e) {
 function keyup(e) {
 	delete segame.kd[e.keyCode];
 }
-function makeMove() {
+function changeMessage() {
+	var r = Math.floor(Math.random() * messages.length);
+	var m = messages[r];
+	document.getElementById('talking').textContent = m;
 }
 function checkALot() {
 	if (38 in segame.kd) { // Player holding up
@@ -335,9 +338,16 @@ function checkForPointCollision() {
 			// console.log('we collect a point');
 			//they intersect!
 			//add points to points
-			segame.score += p[2]
+			segame.score += p[2];
 			var s = document.getElementById('score');
 			s.textContent = segame.score;
+
+			//is this the highest scored score by far??
+			if (segame.score > segame.hiscore) {
+				//let's make people feel good about themselves
+				sls('score', segame.score);
+				segame.hiscore = segame.score;
+			}
 
 			//remove this point from the dom
 			var id = 'point-' + p[3];
@@ -368,7 +378,8 @@ function checkForPointCollision() {
 
 
 //spawn stuff
-function spawning() {
+function spawnThings() {
+	console.log('spawning things');
 	spawnPoints();
 	bombCountdown();
 	spawnBombs();
@@ -430,8 +441,7 @@ function spawnBombs() {
 
 	var bomb = [];
 	var b = document.createElement('div');
-	b.classList.add('bomb');
-	b.id = 'bomb-' + segame.count.bombs;
+	b.classList.add('bomb', 'slow');
 	b.style.height = segame.fifth + 'px';
 	b.style.backgroundSize = segame.fifth * 5 + 'px auto';
 
@@ -446,8 +456,11 @@ function spawnBombs() {
 		// console.log('there was already a bomb there');
 		return;
 	}
+	//okay, now the bomb will for real exist
+	segame.count.bombs++;
 	
-	console.log('now we spawn a bomb!')	
+	b.id = 'bomb-' + segame.count.bombs;
+	// console.log('now we spawn a bomb!')	
 	b.style.left = segame.coordinates[bomb[0]][bomb[1]][0] + 'px';
 	b.style.top = segame.coordinates[bomb[0]][bomb[1]][1] + 'px';
 	b.style.backgroundPosition = -(segame.images.bomb[0][0]) + 'px ' + -(segame.images.bomb[0][1]) + 'px';
@@ -456,11 +469,12 @@ function spawnBombs() {
 	bomb[2] = 3;
 	//tell us what image it's at
 	bomb[3] = 0;
+	//identify the bomb
+	bomb[4] = segame.count.bombs;
 
 	//make it official
 	segame.bombs.push(bomb);
 	segame.canvas.appendChild(b)
-	segame.count.bombs++;
 
 }
 //check for bombs
@@ -485,51 +499,98 @@ function bombCountdown() {
 		var check = segame.bombs[i];
 		check[2]--;
 
-		if (check[2] <= 0) {
+		if (check[2] === 1) {
+			//make it's animation faster
+			var thisbombID = 'bomb-' + check[4];
+			var thisBomb = document.getElementById(thisbombID);
+			thisBomb.classList.remove('slow');
+			thisBomb.classList.add('fast');
+		} else if (check[2] <= 0) {
 			//it's exploding!
 			explode.push(i);
 		}
 	}
 
-	// console.log(explode);
 	if (explode.length) {
-		console.log(explode);
+		bombExplode(explode);
+	}
+}
+function bombExplode(list) {
+	//where are we?
+	var a = [segame.player.me[0], segame.player.me[1]],
+		b = [segame.player.it[0], segame.player.it[1]];
+
+	for (var j = list.length; j > 0; j--) {
+		//which bomb are we checking out?
+		var cb = segame.bombs[list[j - 1]];
+		
 		//check if you were on the bomb
-		//where are we?
-		var a = [segame.player.me[0], segame.player.me[1]],
-			b = [segame.player.it[0], segame.player.it[1]];
+		if ( (a[0] === cb[0] && a[1] === cb[1]) || (b[0] === cb[0] && b[1] === cb[1]) ) {
+			//girl, you as'ploded
+			// console.log('it\'s game over!');
+			console.log('this one killed you: ' + cb[0] + ', ' + cb[1]);
+			youDie();
+			gameOver();
+		}
 
-		for (var j = explode.length - 1; j >= 0; j--) {
-			var cb = segame.bombs[explode[j]];
-			if ( (a[0] === cb[0] && a[1] === cb[1]) || (b[0] === cb[0] && b[1] === cb[1]) ) {
-				//girl, you as'ploded
-				console.log('it\'s game over!');
-				window.clearInterval(checking);
-				window.clearInterval(spawning);
-				window.removeEventListener('keyup', keyup. false);
-				window.removeEventListener('keydown', keydown, false);
-			}
-
-			//let's remove the bomb from the DOM
-			var id = 'bomb-' + cb[3];
-			var child = document.getElementById(id);
-			if (child) {
-				child.style.backgroundPosition = -(segame.images.bomb[2][0]) + 'px ' + -(segame.images.bomb[2][1]) + 'px';
-				window.setTimeout(function() {
-						segame.canvas.removeChild(child);
-					//now let's remove it from the bomb list
-					segame.bombs.splice(j, 1);
-
-				}, 300);
-			}
+		//let's remove the bomb from the DOM and our bomb list
+		segame.bombs.splice((j - 1), 1);
+		var id = 'bomb-' + cb[4];
+		// console.log('removing bomb with id: ' + id);
+		var child = document.getElementById(id);
+		if (child) {
+			child.style.backgroundPosition = -(segame.images.bomb[2][0]) + 'px ' + -(segame.images.bomb[2][1]) + 'px';
+			window.setTimeout(function() {
+					// segame.canvas.removeChild(child);
+					child.parentNode.removeChild(child);
+			}, 300);
 		}
 	}
 }
-//animate the bomb
-function bombFlashing() {
-	// for () {
+function youDie() {
+	console.log('you die now');
+	window.clearInterval(checking);
+	window.clearInterval(spawning);
+	window.clearInterval(talking);
+	window.removeEventListener('keyup', keyup. false);
+	window.removeEventListener('keydown', keydown, false);
+	segame.kd.length = 0;
+	segame.playing = false;
+}
+function backToHome() {
+	//clean up our game area
+	//segame.canvas.children doesn't collect correctly?
+	var rubbish = [];
+	var message = segame.canvas.querySelector('.endmessage');
+	rubbish.push(message);
+	var points = segame.canvas.getElementsByClassName('point');
+	for (var j = 0; j < points.length; j++) {
+		rubbish.push(points[j]);
+	}
+	var bombs = segame.canvas.getElementsByClassName('bomb');
+	for (var k = 0; k < bombs.length; k++) {
+		rubbish.push(bombs[k]);
+	}
 
-	// }
+	// console.log(rubbish);
+	for (var i = 0; i < rubbish.length; i++) {
+		// console.log(rubbish[i]);
+		segame.canvas.removeChild(rubbish[i]);
+	}
+
+	//go back to home screen
+	var from = sescreens.game;
+	var to = sescreens.home;
+	from.style.opacity = 0;
+	window.setTimeout(function() {
+		from.style.display = 'none';
+		to.style.display = 'block';
+		to.style.opacity = 0.01;
+		window.setTimeout(function() {
+			to.style.opacity = 1;
+		}, 100);
+	}, 300);
+
 }
 
 
@@ -546,3 +607,51 @@ function outofFive() {
 	var num = Math.floor(Math.random() * 4);
 	return num;
 }
+
+//messages
+endMess = [
+	'Oh poop, you died.',
+	'Dude, that sucks.',
+	'Bummer. Try again when you aren\'t terrible.',
+	'I wouldn\'t tell my grandma about that one.',
+	'Death comes to us all, eventually.',
+	'Greedy Pig!',
+	'Fill heaven with your failure.',
+	'Fill hell with your greed for points.',
+	'Push through this and keep playing.',
+	'Understand that it was you, not me.',
+	'I\'d start hating me, too.',
+	'Better write down this code: L33T5uX',
+	'Remember that secret code? What secret code? ...nevermind.',
+	'Remember this on your death bed/in your death throws',
+	'It\'s okay, really. We didn\'t like that character color anyway.',
+	'Try changing your character color, maybe luck is what you need.',
+	'What the heck was that? No, don\'t start crying',
+	'I can\'t stand how bad that was.',
+	'Your performance fills me with pain.',
+	'Don\'t tell me you were actually trying.'
+];
+
+messages = [
+	'ksjdhfskdjhfadsgjg',
+	'Keep moving the guys around!',
+	'Don\'t get caught up in all the details.',
+	'Have you realised that the character movements are connected?',
+	'It\'s like they are connected somehow...',
+	'Here\'s the secret code: URAB77M34N13',
+	'I think we should be worried about you.',
+	'Play the game, butt munch.',
+	'Don\'t explode. It\'s as simple as that.',
+	'Bombs last for 3 seconds.',
+	'You last as long as you live. You are not like the gallon of rotting milk in your fridge.',
+	'Light the world up with your farts.',
+	'Du ar vacker.',
+	'My mom plays better than you.',
+	'Keep your cool and play better, GAWSH.',
+	'Seien Sie ein Held heute.',
+	'Sorry that I\'m not sorry.',
+	'Live your life as you like, not how someone else would like.',
+	'These little guys don\'t want to be assplodified.',
+	'Bomb them, just bomb the little guys already!',
+	'Be greedy and collect as many as the glowing points as you can.'
+];
