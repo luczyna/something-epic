@@ -304,6 +304,8 @@ function checkALot() {
 		if (segame.player.me[0] > 0 && !segame.moving) {
 			segame.player.me[0]--;
 			segame.player.it[0]++;
+			segame.player.me[2] = 1;
+			segame.player.it[2] = 0;
 			moveGuys();
 		}
 	}
@@ -312,6 +314,8 @@ function checkALot() {
 		if (segame.player.me[0] < 4 && !segame.moving) {
 			segame.player.me[0]++;
 			segame.player.it[0]--;
+			segame.player.me[2] = 0;
+			segame.player.it[2] = 1;
 			moveGuys();
 		}
 	}
@@ -374,7 +378,7 @@ function checkForPointCollision() {
 
 //spawn stuff
 function spawnThings() {
-	console.log('spawning things');
+	// console.log('spawning things');
 	spawnPoints();
 	bombCountdown();
 	spawnBombs();
@@ -552,10 +556,14 @@ function youDie() {
 	window.clearInterval(checking);
 	window.clearInterval(spawning);
 	window.clearInterval(talking);
+	window.clearInterval(walking);
 	window.removeEventListener('keyup', keyup. false);
 	window.removeEventListener('keydown', keydown, false);
 	segame.kd.length = 0;
 	segame.playing = false;
+	segame.moving = false;
+	segame.me.style.backgroundPosition = -(segame.images.guy[segame.color][4][0]) + 'px ' + -(segame.images.guy[segame.color][4][1]) + 'px';
+	segame.it.style.backgroundPosition = -(segame.images.guy[4][4][0]) + 'px ' + -(segame.images.guy[4][4][1]) + 'px';
 }
 function backToHome() {
 	//clean up our game area
@@ -576,6 +584,17 @@ function backToHome() {
 	for (var i = 0; i < rubbish.length; i++) {
 		// console.log(rubbish[i]);
 		segame.canvas.removeChild(rubbish[i]);
+	}
+
+	//update highscore on home page
+	var hs = document.getElementById('hiscore');
+	if (hs) {
+		hs.textContent = 'max-score: ' + segame.hiscore;
+	} else {
+		var elem = document.createElement('p');
+		elem.id = 'hiscore';
+		elem.textContent = 'max-score: ' + segame.hiscore;
+		sescreens.home.insertBefore(elem, sescreens.home.children[3]);
 	}
 
 	//go back to home screen
@@ -629,6 +648,8 @@ function touchEnd(evt) {
 			} else if ((segame.touch[2] < segame.touch[0]) && (segame.touch[0] - segame.touch[2] > 50)) {
 				// swipe left
 				if (segame.player.me[0] > 0 && !segame.moving) {
+					segame.player.me[2] = 1;
+					segame.player.it[2] = 0;
 					segame.player.me[0]--;
 					segame.player.it[0]++;
 					moveGuys();
@@ -636,6 +657,8 @@ function touchEnd(evt) {
 			} else if ((segame.touch[2] > segame.touch[0]) && (segame.touch[2] - segame.touch[0] > 50)) {
 				//swipe right
 				if (segame.player.me[0] < 4 && !segame.moving) {
+					segame.player.me[2] = 0;
+					segame.player.it[2] = 1;
 					segame.player.me[0]++;
 					segame.player.it[0]--;
 					moveGuys();
@@ -643,6 +666,53 @@ function touchEnd(evt) {
 			}
 		}
 	}
+}
+
+//animation for characters
+function animateGuys() {
+	if (segame.moving) {
+		if (segame.player.me[3] === 0) {
+			segame.player.me[3] = 1;
+			segame.player.it[3] = 1;
+		} else {
+			segame.player.me[3] = 0;
+			segame.player.it[3] = 0;
+		}
+			changeGuyPicture();
+	} else {
+		//they are standing still
+		segame.player.me[3] = 0;
+		segame.player.it[3] = 0;
+
+		var md = (segame.player.me[2] === 0) ? 0 : 2;
+		var mx = segame.images.guy[segame.color][md][0];
+		var my = segame.images.guy[segame.color][md][1]; 
+		segame.me.style.backgroundPosition = -(mx) + 'px ' + -(my) + 'px';
+
+		var itd = (segame.player.it[2] === 0) ? 0 : 2;
+		var itx = segame.images.guy[4][itd][0];
+		var ity = segame.images.guy[4][itd][1]; 
+		segame.it.style.backgroundPosition = -(itx) + 'px ' + -(ity) + 'px';
+	}
+}
+function changeGuyPicture() {
+	// console.log('moving the sprites!');
+	var md = segame.player.me[2];
+	var ma = segame.player.me[3];
+	var base = (md === 0) ? 0 : 2;
+	var mwhich = base + ma;
+	var mx = segame.images.guy[segame.color][mwhich][0];
+	var my = segame.images.guy[segame.color][mwhich][1];
+	// console.log(mx + ' ' + my);
+	segame.me.style.backgroundPosition = -(mx) + 'px ' + -(my) + 'px';
+
+	var itd = segame.player.it[2];
+	var ita = segame.player.it[3];
+	var base = (itd === 0) ? 0 : 2;
+	var itwhich = base + ita;
+	var itx = segame.images.guy[4][itwhich][0];
+	var ity = segame.images.guy[4][itwhich][1]; 
+	segame.it.style.backgroundPosition = -(itx) + 'px ' + -(ity) + 'px';
 }
 
 

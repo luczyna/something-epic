@@ -7,8 +7,8 @@ var segame = {
 	score: 0,
 	hiscore: 0,
 	player: {
-		me: [2, 2, 1],
-		it: [2, 2, 1]
+		me: [2, 2, 1, 0],
+		it: [2, 2, 1, 0]
 	},
 	coordinates: [[],[],[],[],[]],
 	monsters: [],
@@ -54,9 +54,12 @@ function init() {
 	if (typeof scr !== 'undefined') {
 		// console.log('poop');
 		var elem = document.createElement('p');
+		elem.id = 'hiscore';
 		elem.textContent = 'max-score: ' + scr;
 		sescreens.home.insertBefore(elem, sescreens.home.children[3]);
 		segame.hiscore = Number(scr);
+	} else {
+		sls('score', 0);
 	}
 
 	//fill the coordinate variables
@@ -85,8 +88,8 @@ function getReadyToPlay() {
 	segame.round = 0;
 	document.getElementById('score').textContent = 0;
 	segame.score = 0;
-	segame.player.me = [2, 2, 1];
-	segame.player.it = [2, 2, 1];
+	segame.player.me = [2, 2, 1, 0];
+	segame.player.it = [2, 2, 1, 0];
 	segame.monsters.length = 0;
 	segame.bombs.length = 0;
 	segame.points.length = 0;
@@ -145,10 +148,10 @@ function goPlayGame() {
 	}, 300);
 }
 
-var checking, spawning, talking;
+var checking, spawning, talking, walking;
 
 function prepareCanvas() {
-	console.log('good luck, asshole');
+	// console.log('good luck, asshole');
 
 	if (segame.me.style.height === '') {
 		segame.me.style.height = segame.me.offsetWidth + 'px';
@@ -166,6 +169,7 @@ function prepareCanvas() {
 	checking = window.setInterval(checkALot, 50);
 	spawning = window.setInterval(spawnThings, 1000);
 	talking = window.setInterval(changeMessage, 3000);
+	walking = window.setInterval(animateGuys, 200);
 
 }
 function gameOver() {
@@ -183,7 +187,7 @@ function gameOver() {
 			var r = Math.floor(Math.random() * endMess.length);
 			segame.canvas.appendChild(m);
 			m.textContent = 'GAME OVER - ' + endMess[r];
-			console.log(m);
+			// console.log(m);
 			window.setTimeout(function() {
 				m.style.opacity = 1;
 				m.style.top = '15%'

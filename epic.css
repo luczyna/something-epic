@@ -6,6 +6,11 @@ html, body {
 	margin: 0;
 	padding: 0;
 }
+html {
+	
+	background-position: top center;
+	background: #3B3B39;
+}
 
 /* colors
  * offblack		#575756
@@ -94,13 +99,8 @@ html, body {
 .home .about {
 	display: none;
 	background: rgba(255,255,255,0.9);
-	padding: 2.5%;
 	color: #333;
 	position: absolute;
-	top: 3em;
-	width: 60%;
-	left: 17.5%;
-	right: 17.5%;
 }
 .about .about-wrap {
 	position: relative;
@@ -277,11 +277,17 @@ html, body {
 
 @media all and (min-width:60em) {
 html {
-	background: #3B3B39;
 	background-image: url(images/bg1.jpg);
 	background-repeat: no-repeat;
 	background-size: 100% auto;
-	background-position: top center;
+}
+
+.home .about {
+	padding: 2.5%;
+	top: 3em;
+	width: 60%;
+	left: 17.5%;
+	right: 17.5%;
 }
 
 /* end desktop and maybe tablet query */
@@ -293,11 +299,17 @@ html {
 
 @media screen and (max-width:60em) {
 html {
-	background: #3B3B39;
 	background-image: url(images/bg1m.jpg);
 	background-repeat: no-repeat;
 	background-size: 100% auto;
-	background-position: top center;
+}
+
+.home .about {
+	padding: 2.5%;
+	top: 2em;
+	width: 80%;
+	left: 5%;
+	right: 5%;
 }
 
 /* end desktop and maybe tablet query */
