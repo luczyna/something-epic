@@ -420,7 +420,12 @@ function spawnPoints() {
 }
 function spawnBombs() {
 	//there should be at most 6 bombs on screen
-	if (segame.bombs.length >= 6) {
+	//scratch that.
+	//at most, 15 bombs. The number will increase with the length of the game
+	//we will measure the game by the amount of bombs spawned
+	//not perfect, but it's a start
+	var limit = Math.max(15, segame.bombs.length/5 + 6);
+	if (segame.bombs.length >= limit) {
 		// console.log('too many bombs');
 		return;
 	}
@@ -607,28 +612,28 @@ function touchEnd(evt) {
 		segame.touch[3] = evt.changedTouches[0].screenY;
 
 		if (!segame.moving) {
-			if ((segame.touch[3] > segame.touch[1]) && (segame.touch[3] - segame.touch[1] > 100)) {
+			if ((segame.touch[3] > segame.touch[1]) && (segame.touch[3] - segame.touch[1] > 50)) {
 		 		//swipe down
 				if (segame.player.me[1] < 4 && !segame.moving) {
 					segame.player.me[1]++;
 					segame.player.it[1]--;
 					moveGuys();
 				}
-			} else if ((segame.touch[3] < segame.touch[1]) && (segame.touch[1] - segame.touch[3] > 100)) {
+			} else if ((segame.touch[3] < segame.touch[1]) && (segame.touch[1] - segame.touch[3] > 50)) {
 				//swipe up
 				if (segame.player.me[1] > 0 && !segame.moving) {
 					segame.player.me[1]--;
 					segame.player.it[1]++;
 					moveGuys();
 				}
-			} else if ((segame.touch[2] < segame.touch[0]) && (segame.touch[0] - segame.touch[2] > 100)) {
+			} else if ((segame.touch[2] < segame.touch[0]) && (segame.touch[0] - segame.touch[2] > 50)) {
 				// swipe left
 				if (segame.player.me[0] > 0 && !segame.moving) {
 					segame.player.me[0]--;
 					segame.player.it[0]++;
 					moveGuys();
 				}
-			} else if ((segame.touch[2] > segame.touch[0]) && (segame.touch[2] - segame.touch[0] > 100)) {
+			} else if ((segame.touch[2] > segame.touch[0]) && (segame.touch[2] - segame.touch[0] > 50)) {
 				//swipe right
 				if (segame.player.me[0] < 4 && !segame.moving) {
 					segame.player.me[0]++;
