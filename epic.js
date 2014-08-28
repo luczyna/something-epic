@@ -32,7 +32,14 @@ var segame = {
 	it: document.getElementById('it'),
 	canvas: document.getElementById('can'),
 	kd: [],
-	touch: []
+	touch: [],
+	audio: {
+		bg: document.getElementById('audio-bg'),
+		bomb: document.getElementById('audio-b'),
+		deathByBomb: document.getElementById('audio-d'),
+		point: document.getElementById('audio-p'),
+		allow: true
+	}
 }
 var sescreens = {
 	home: document.getElementById('homescreen'),
@@ -61,6 +68,9 @@ function init() {
 	} else {
 		sls('score', 0);
 	}
+
+	//start getting the audio
+	document.getElementById('audio-allow').addEventListener('click', loadAudio, false);
 
 	//fill the coordinate variables
 	//size things that need sizing

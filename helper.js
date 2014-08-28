@@ -363,6 +363,9 @@ function checkForPointCollision() {
 	//now clean up after ourselves
 	// console.log('cleanup amount: ' + cleanup.length);
 	if (cleanup.length) {
+		if (segame.audio.allow) {
+			segame.audio.point.play();
+		}
 		for (var j = cleanup.length; j > 0; j--) {
 			//this point is done with
 			// console.log('cleanup item: ' + cleanup[j - 1]);
@@ -516,6 +519,9 @@ function bombCountdown() {
 	}
 
 	if (explode.length) {
+		if (segame.audio.allow) {
+		segame.audio.bomb.play();
+		}
 		bombExplode(explode);
 	}
 }
@@ -552,6 +558,9 @@ function bombExplode(list) {
 	}
 }
 function youDie() {
+	if (segame.audio.allow) {
+	segame.audio.deathByBomb.play();
+	}
 	console.log('you die now');
 	window.clearInterval(checking);
 	window.clearInterval(spawning);
@@ -714,6 +723,22 @@ function changeGuyPicture() {
 	var ity = segame.images.guy[4][itwhich][1]; 
 	segame.it.style.backgroundPosition = -(itx) + 'px ' + -(ity) + 'px';
 }
+
+//play sounds
+function loadAudio() {
+	if (this.getAttribute('data-yes') === 'yes') {
+		segame.audio.allow = false;
+		segame.audio.bg.pause();
+		this.setAttribute('data-yes', 'no');
+		this.textContent = 'allow audio';
+	} else {
+		segame.audio.allow = true;
+		segame.audio.bg.play();
+		this.setAttribute('data-yes', 'yes');
+		this.textContent = 'stop that racket';
+	}
+}
+
 
 
 
