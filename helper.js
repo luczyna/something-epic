@@ -431,7 +431,8 @@ function spawnBombs() {
 	//at most, 15 bombs. The number will increase with the length of the game
 	//we will measure the game by the amount of bombs spawned
 	//not perfect, but it's a start
-	var limit = Math.max(15, segame.bombs.length/5 + 6);
+	var limit = Math.floor(Math.min(15, segame.count.bombs/5 + 6));
+	console.log('bomb limit is: ' + limit);
 	if (segame.bombs.length >= limit) {
 		// console.log('too many bombs');
 		return;
@@ -728,11 +729,13 @@ function changeGuyPicture() {
 function loadAudio() {
 	if (this.getAttribute('data-yes') === 'yes') {
 		segame.audio.allow = false;
+		segame.audio.bg.volume = 0.3;
 		segame.audio.bg.pause();
 		this.setAttribute('data-yes', 'no');
-		this.textContent = 'allow audio';
+		this.textContent = 'play background \'melody\'?';
 	} else {
 		segame.audio.allow = true;
+		segame.audio.bg.volume = 0.6;
 		segame.audio.bg.play();
 		this.setAttribute('data-yes', 'yes');
 		this.textContent = 'stop that racket';
