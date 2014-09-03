@@ -106,6 +106,12 @@ html {
 	position: relative;
 }
 .about-wrap p {}
+.about-wrap a {
+	color: #333;
+}
+.about-wrap a:visited {
+	color: #333;
+}
 .about-wrap .about-closer {
 	background: #E30613;
 	color: white;
