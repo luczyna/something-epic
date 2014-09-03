@@ -119,6 +119,25 @@ html {
 /* how to instruction screen */
 .howto {
 	display: none;
+	position: relative;
+	margin: 1em auto 4em;
+	padding: 0 5%;
+}
+.howto p {
+	line-height: 1.3;
+}
+.howto img {
+	display: block;
+	margin: 0 auto 1em;
+	width: 100%;
+}
+.howto .howtoclose {
+	width: 95%;
+	text-align: center;
+	display: inline-block;
+	background: #009640;
+	color: white;
+	padding: 0.5em 2.5%;
 }
 
 /* character screen */
@@ -263,7 +282,7 @@ html {
 }
 /* but position the control of the audio */
 #audio-allow {
-	position: absolute;
+	position: fixed;
 	bottom: 1em;
 	right: 0.5em;
 	border: 1px white solid;

@@ -60,8 +60,30 @@ function hideAbout() {
 
 
 //show the how to instructions
-function showHowTo() {
-	console.log('poop');
+function showHowTo(evt) {
+	evt.stopPropagation();
+
+	sescreens.home.style.opacity = 0;
+	window.setTimeout(function() {
+		sescreens.home.style.display = 'none';
+		sescreens.howto.style.display = 'block';
+		sescreens.howto.style.opacity = 0.01;
+		window.setTimeout(function() {
+			sescreens.howto.style.opacity = 1;
+		}, 100);
+		
+		sescreens.howto.getElementsByClassName('howtoclose')[0].addEventListener('click', closeHowTo, false);
+	}, 300);
+}
+function closeHowTo() {
+	sescreens.howto.getElementsByClassName('howtoclose')[0].removeEventListener('click', closeHowTo, false);
+
+	sescreens.howto.style.opacity = 0;
+	sescreens.home.style.display = 'block';
+	window.setTimeout(function() {
+		sescreens.howto.style.display = 'none';
+		sescreens.home.style.opacity = 1;
+	}, 300)
 }
 
 
