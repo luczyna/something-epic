@@ -19,7 +19,6 @@
 				<a class="click small" id="change">change character</a>
 				<a class="click small" id="about">about this game</a>
 
-				<a class="click" id="audio-allow">play background 'melody'?</a>
 				<hr>
 				<p class="small">by tropvache and bootstrut</p>
 
@@ -69,11 +68,13 @@
 		</div>
 
 		<div class="recordshop">
-			<audio loop="true" autoplay src="audio/se.mp3" id="audio-bg"></audio>
-			<audio src="audio/point.mp3" id="audio-p"></audio>
-			<audio src="audio/bomb.mp3" id="audio-b"></audio>
-			<audio src="audio/bombdeath.mp3" id="audio-d"></audio>
+			<audio loop="true" volume="0.6" src="audio/se.mp3" id="audio-bg"></audio>
+			<audio src="audio/point.mp3" volume="0.4" id="audio-p"></audio>
+			<audio src="audio/bomb.mp3" volume="0.3" id="audio-b"></audio>
+			<audio src="audio/bombdeath.mp3" volume="0.3" id="audio-d"></audio>
 		</div>
+
+		<a class="click" id="audio-allow">play music</a>
 		
 		<script type="text/javascript" src="helper.js"></script>
 		<script type="text/javascript" src="epic.js"></script>

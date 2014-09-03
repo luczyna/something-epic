@@ -187,6 +187,7 @@ function gameOver() {
 
 	//flash the screen to signify death
 	segame.canvas.style.backgroundColor = 'white';
+	
 	window.setTimeout( function() {
 		segame.canvas.style.backgroundColor = 'transparent';
 		
@@ -200,9 +201,9 @@ function gameOver() {
 			// console.log(m);
 			window.setTimeout(function() {
 				m.style.opacity = 1;
-				m.style.top = '15%'
+				m.style.top = '10px';
 				m.addEventListener('click', backToHome, false);
-			})	
+			}, 200)
 		}, 500);
 	}, 300);
 

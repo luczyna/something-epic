@@ -171,8 +171,9 @@ html {
 	z-index: 990;
 	width: 80%;
 	padding: 1em 10%;
+	margin: 0;
 	font-size: 3em;
-	top: 30%;
+	top: 3em;
 	opacity: 0.01;
 	background: #E30613;
 	color: white;
@@ -259,6 +260,15 @@ html {
 /* hide the audio */
 .recordshop {
 	display: none;
+}
+/* but position the control of the audio */
+#audio-allow {
+	position: absolute;
+	bottom: 1em;
+	right: 0.5em;
+	border: 1px white solid;
+	border-radius: 1em;
+	padding: 0.5em;
 }
 
 

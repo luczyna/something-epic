@@ -732,13 +732,14 @@ function loadAudio() {
 		segame.audio.bg.volume = 0.3;
 		segame.audio.bg.pause();
 		this.setAttribute('data-yes', 'no');
-		this.textContent = 'play background \'melody\'?';
+		this.textContent = 'play music';
 	} else {
+		console.log('what');
 		segame.audio.allow = true;
 		segame.audio.bg.volume = 0.6;
 		segame.audio.bg.play();
 		this.setAttribute('data-yes', 'yes');
-		this.textContent = 'stop that racket';
+		this.textContent = 'no music';
 	}
 }
 
